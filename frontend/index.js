@@ -15,14 +15,21 @@ function myFn() {
 function addToUl(data) {
   // console.log(data)
   for (d of data) {
-      const li = document.createElement('li')
-      li.innerHTML = `
-      name: ${d["attributes"]["first_name"]} ${d["attributes"]["last_name"]}
-      `
-      ul.appendChild(li)
-    // console.log(d["attributes"]);
+    renderItem(d)
   }
 }
+
+function renderItem(data){
+  const li = document.createElement('li')
+  li.innerHTML = `
+    <div>
+      name: ${data["attributes"]["first_name"]} ${data  ["attributes"]["last_name"]}
+    </div>
+  `
+  ul.appendChild(li)
+}
+
+
 let handleSubmit = (event) => {
   event.preventDefault()
 
@@ -43,11 +50,9 @@ let handleSubmit = (event) => {
     body: JSON.stringify(itemInfo)
   }
   fetch(URL, configObject).then(response => response.json()).then(data => {
-    debugger
+    renderItem(data)
   })
 }
 form.addEventListener("submit", handleSubmit)
-
-
 
 myFn();
