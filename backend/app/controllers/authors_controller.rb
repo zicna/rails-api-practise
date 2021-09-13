@@ -7,10 +7,7 @@ class AuthorsController < ApplicationController
     end
 
     def create
-        
         # byebug
-
-        
         author = Author.new(author_params)
         if author.save
             render json: AuthorSerializer.new(author)
