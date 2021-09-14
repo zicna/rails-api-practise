@@ -16,6 +16,12 @@ class AuthorsController < ApplicationController
         end
     end
 
+    def destroy
+        author = Author.find_by(id: params[:id])
+        author.destroy
+        render json: {notice: "Author #{author.full_name} has been deleted"}
+    end
+
     private
 
     def author_params

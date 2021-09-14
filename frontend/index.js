@@ -13,7 +13,7 @@ function myFn() {
 }
 
 function addToUl(data) {
-  console.log(data);
+  // console.log(data);
   for (d of data) {
     renderItem(d);
   }
@@ -21,23 +21,54 @@ function addToUl(data) {
 
 function renderItem(data) {
   const li = document.createElement("li");
-  if (data["attributes"]) {
-    // debugger
+  if (!!data["error"]) {
+    alert(data["error"]);
+    form.reset();
+  } else {
     li.innerHTML = `
     <div>
       name: ${data["attributes"]["first_name"]} ${data["attributes"]["last_name"]}
     </div>
-    <button class="edit-btn">Edit</button>
-    <button class="delete-btn">Delete</button>
-  `;
-  // li.addEventListener();
-  ul.appendChild(li);
-  } else if (data["error"]){
-    // debugger
-    alert(data["error"])
-    form.reset()
+    <div class="buttons" data-set=${data["id"]}>
+      <button class="edit-btn">Edit</button>
+      <button class="delete-btn">Delete</button>
+    <div class="buttons">
+    `;
+    const divBtns = li.lastChild;
+    divBtns.addEventListener("click", handleClick);
+    ul.appendChild(li);
+    form.reset();
   }
-  
+}
+
+function handleClick(e) {
+  if (e.target.innerText === "Delete") {
+    deleteBtn(e.target);
+  } else if (e.target.innerText === "Edit") {
+    e.target.innerText = "Save";
+  } else if (e.target.innerText === "Save") {
+    e.target.innerText = "Edit";
+  }
+}
+
+function deleteBtn(event) {
+  const id = event.parentElement.dataset["set"];
+  const li = event.parentElement.parentElement;
+  const configObject = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  };
+  // debugger
+  li.remove()
+
+  fetch(`${URL}/${id}`, configObject)
+    .then((response) => response.json())
+    .then((data) => {
+      alert(data["notice"]);
+    });
 }
 
 let handleSubmit = (event) => {
@@ -49,7 +80,7 @@ let handleSubmit = (event) => {
       last_name: lastName.value,
     },
   };
-  // debugger
+
   const configObject = {
     method: "POST",
     headers: {
@@ -62,8 +93,8 @@ let handleSubmit = (event) => {
   fetch(URL, configObject)
     .then((response) => response.json())
     .then((data) => {
-      renderItem(data)
-      // debugger;
+      // debugger
+      renderItem(data["data"]);
     });
 };
 form.addEventListener("submit", handleSubmit);
